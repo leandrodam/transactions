@@ -6,15 +6,16 @@ import (
 	"testing"
 
 	domain "github.com/leandrodam/transactions/internal/domain/account"
-	mock "github.com/leandrodam/transactions/internal/domain/account/mocks"
+	mocks "github.com/leandrodam/transactions/internal/domain/account/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func Test_Create(t *testing.T) {
 	tests := []struct {
 		name              string
 		input             domain.Account
-		accountRepository *mock.MockRepository
+		accountRepository *mocks.MockRepository
 		output            domain.Account
 		wantError         bool
 	}{
@@ -23,9 +24,9 @@ func Test_Create(t *testing.T) {
 			input: domain.Account{
 				DocumentNumber: "12345678900",
 			},
-			accountRepository: func() *mock.MockRepository {
-				mockRepo := mock.NewMockRepository(t)
-				mockRepo.On("Create", context.Background(), domain.Account{
+			accountRepository: func() *mocks.MockRepository {
+				mockRepo := mocks.NewMockRepository(t)
+				mockRepo.On("Create", mock.Anything, domain.Account{
 					DocumentNumber: "12345678900",
 				}).Return(domain.Account{
 					AccountID:      1,
@@ -44,9 +45,9 @@ func Test_Create(t *testing.T) {
 			input: domain.Account{
 				DocumentNumber: "12345678900",
 			},
-			accountRepository: func() *mock.MockRepository {
-				mockRepo := mock.NewMockRepository(t)
-				mockRepo.On("Create", context.Background(), domain.Account{
+			accountRepository: func() *mocks.MockRepository {
+				mockRepo := mocks.NewMockRepository(t)
+				mockRepo.On("Create", mock.Anything, domain.Account{
 					DocumentNumber: "12345678900",
 				}).Return(domain.Account{}, errors.New("exec error"))
 				return mockRepo

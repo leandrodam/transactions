@@ -1,7 +1,6 @@
 package account
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -14,6 +13,7 @@ import (
 	"github.com/leandrodam/transactions/internal/infrastructure/validator"
 	mocks "github.com/leandrodam/transactions/internal/usecases/account/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func Test_GetById(t *testing.T) {
@@ -41,7 +41,7 @@ func Test_GetById(t *testing.T) {
 			input: "1",
 			useCase: func() *mocks.MockUseCase {
 				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("GetByID", context.Background(), 1).
+				mockUseCase.On("GetByID", mock.Anything, 1).
 					Return(domain.Account{}, exceptions.ErrInternal)
 				return mockUseCase
 			}(),
@@ -55,7 +55,7 @@ func Test_GetById(t *testing.T) {
 			input: "1",
 			useCase: func() *mocks.MockUseCase {
 				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("GetByID", context.Background(), 1).
+				mockUseCase.On("GetByID", mock.Anything, 1).
 					Return(domain.Account{
 						AccountID:      1,
 						DocumentNumber: "12345678900",

@@ -2,7 +2,6 @@ package account
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -15,6 +14,7 @@ import (
 	"github.com/leandrodam/transactions/internal/infrastructure/validator"
 	mocks "github.com/leandrodam/transactions/internal/usecases/account/mocks"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func Test_Create(t *testing.T) {
@@ -66,7 +66,7 @@ func Test_Create(t *testing.T) {
 			input: []byte(`{ "document_number": "12345678900" }`),
 			useCase: func() *mocks.MockUseCase {
 				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("Create", context.Background(), domain.Account{
+				mockUseCase.On("Create", mock.Anything, domain.Account{
 					DocumentNumber: "12345678900",
 				}).Return(domain.Account{}, exceptions.ErrInternal)
 				return mockUseCase
@@ -81,7 +81,7 @@ func Test_Create(t *testing.T) {
 			input: []byte(`{ "document_number": "12345678900" }`),
 			useCase: func() *mocks.MockUseCase {
 				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("Create", context.Background(), domain.Account{
+				mockUseCase.On("Create", mock.Anything, domain.Account{
 					DocumentNumber: "12345678900",
 				}).Return(domain.Account{
 					AccountID:      1,
