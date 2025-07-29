@@ -1,0 +1,233 @@
+openapi: 3.0.4
+info:
+  title: Transactions API
+  description: API for managing transactions
+  version: 1.0.0
+  contact:
+    name: Leandro Damasceno Alves
+    email: leandro.dalves@gmail.com
+servers:
+  - url: http://localhost:8080/v1
+    description: Development server
+
+paths:
+  /accounts:
+    post:
+      summary: Create an account
+      description: Creates a new account based on the document number
+      operationId: createAccount
+      tags:
+        - Accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - document_number
+              properties:
+                document_number:
+                  type: string
+                  description: Document number
+                  example: "12345678900"
+                  minLength: 11
+                  maxLength: 11
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad Request - Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - Account already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /accounts/{accountId}:
+    get:
+      summary: Retrieve account information
+      description: Retrieves information for a specific account
+      operationId: getAccount
+      tags:
+        - Accounts
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          description: Account ID
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            example: 1
+      responses:
+        '200':
+          description: Account information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad Request - Invalid ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found - Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /transactions:
+    post:
+      summary: Create a transaction
+      description: Creates a new transaction for an account
+      operationId: createTransaction
+      tags:
+        - Transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account_id
+                - operation_type_id
+                - amount
+              properties:
+                account_id:
+                  type: integer
+                  format: int64
+                  description: Account ID
+                  example: 1
+                  minimum: 1
+                operation_type_id:
+                  type: integer
+                  format: int64
+                  description: Operation Type ID
+                  example: 1
+                  minimum: 1
+                amount:
+                  type: number
+                  format: double
+                  description: Transaction amount
+                  example: 123.45
+                  minimum: 0.01
+      responses:
+        '201':
+          description: Transaction created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '400':
+          description: Bad Request - Invalid data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Conflict - Transaction creation conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Account:
+      type: object
+      required:
+        - account_id
+        - document_number
+      properties:
+        account_id:
+          type: integer
+          format: int64
+          description: Unique account identifier
+          example: 1
+        document_number:
+          type: string
+          description: Document number
+          example: "12345678900"
+
+    Transaction:
+      type: object
+      required:
+        - transaction_id
+        - account_id
+        - operation_type_id
+        - amount
+        - event_date
+      properties:
+        transaction_id:
+          type: integer
+          format: int64
+          description: Unique transaction identifier
+          example: 1
+        account_id:
+          type: integer
+          format: int64
+          description: Account ID
+          example: 1
+        operation_type_id:
+          type: integer
+          format: int64
+          description: Operation Type ID
+          example: 1
+        amount:
+          type: number
+          format: double
+          description: Transaction amount
+          example: 123.45
+
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        messages:
+          type: array
+          description: Error messages
+          items:
+            type: string
+          example:
+            - "Invalid request data"
+            - "Document Number is required"
+
+tags:
+  - name: Accounts
+    description: Account-related operations
+  - name: Transactions
+    description: Transaction-related operations
