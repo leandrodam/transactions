@@ -49,6 +49,7 @@ func setupCustomMessages(validate *validator.Validate, trans ut.Translator) {
 		"min":      "{0} must be at least {1} characters",
 		"max":      "{0} cannot exceed {1} characters",
 		"gt":       "{0} must be greater than {1}",
+		"gte":      "{0} must be greater than or equal to {1}",
 	}
 
 	for tag, msg := range messages {
