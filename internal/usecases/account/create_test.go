@@ -1,0 +1,71 @@
+package account
+
+import (
+	"context"
+	"errors"
+	"testing"
+
+	domain "github.com/leandrodam/transactions/internal/domain/account"
+	mock "github.com/leandrodam/transactions/internal/domain/account/mocks"
+	"github.com/stretchr/testify/assert"
+)
+
+func Test_Create(t *testing.T) {
+	tests := []struct {
+		name              string
+		account           domain.Account
+		accountRepository *mock.MockRepository
+		expectedOutput    domain.Account
+		wantError         bool
+	}{
+		{
+			name: "Success",
+			account: domain.Account{
+				DocumentNumber: "12345678900",
+			},
+			accountRepository: func() *mock.MockRepository {
+				mockRepo := mock.NewMockRepository(t)
+				mockRepo.On("Create", context.Background(), domain.Account{
+					DocumentNumber: "12345678900",
+				}).Return(domain.Account{
+					AccountID:      1,
+					DocumentNumber: "12345678900",
+				}, nil)
+				return mockRepo
+			}(),
+			expectedOutput: domain.Account{
+				AccountID:      1,
+				DocumentNumber: "12345678900",
+			},
+			wantError: false,
+		},
+		{
+			name: "Error creating account",
+			account: domain.Account{
+				DocumentNumber: "12345678900",
+			},
+			accountRepository: func() *mock.MockRepository {
+				mockRepo := mock.NewMockRepository(t)
+				mockRepo.On("Create", context.Background(), domain.Account{
+					DocumentNumber: "12345678900",
+				}).Return(domain.Account{}, errors.New("exec error"))
+				return mockRepo
+			}(),
+			expectedOutput: domain.Account{},
+			wantError:      true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			useCase := NewUseCase(tt.accountRepository)
+			account, err := useCase.Create(context.Background(), tt.account)
+			if tt.wantError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+			}
+			assert.Equal(t, tt.expectedOutput, account)
+		})
+	}
+}
