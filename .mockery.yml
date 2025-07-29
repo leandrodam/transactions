@@ -18,3 +18,9 @@ packages:
   github.com/leandrodam/transactions/internal/domain/transaction:
     config:
       all: true
+  github.com/leandrodam/transactions/internal/usecases/account:
+    config:
+      all: true
+  github.com/leandrodam/transactions/internal/usecases/transaction:
+    config:
+      all: true
