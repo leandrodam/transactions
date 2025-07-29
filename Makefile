@@ -22,7 +22,7 @@ vendor: ## Run go mod tidy and vendor
 
 test: ## Run tests
 	@echo "$(YELLOW)Running tests...$(RESET)"
-	@go test -v ./...
+	@go test -cover ./...
 
 up: ## Start services with docker compose
 	@echo "$(YELLOW)Starting services...$(RESET)"
