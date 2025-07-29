@@ -1,0 +1,73 @@
+name: transactions
+
+services:
+  app:
+    build:
+      context: ../../
+      dockerfile: ./scripts/docker/api/Dockerfile
+      target: release
+    container_name: transactions_app
+    environment:
+      - APP_NAME=${APP_NAME}
+      - APP_ENV=${APP_ENV}
+      - APP_PORT=${APP_PORT}
+      - DB_HOST=transactions_mysql
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    ports:
+      - "${APP_PORT}:8080"
+    depends_on:
+      - migrate
+      - mysql
+
+  migrate:
+    build:
+      context: ../../
+      dockerfile: ./scripts/docker/api/Dockerfile
+      target: migrate
+    container_name: transactions_migrate
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=transactions_mysql
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    container_name: transactions_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ../db/init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysql",
+          "-h",
+          "localhost",
+          "-u",
+          "${DB_USER}",
+          "-p${DB_PASSWORD}",
+          "-e",
+          "SELECT 1",
+        ]
+      timeout: 10s
+      retries: 10
+      interval: 2s
+      start_period: 20s
+
+volumes:
+  mysql-data:

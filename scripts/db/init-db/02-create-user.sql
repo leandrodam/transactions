@@ -1,0 +1,3 @@
+CREATE USER IF NOT EXISTS 'admin'@'%' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON transactions.* TO 'admin'@'%';
+FLUSH PRIVILEGES;
