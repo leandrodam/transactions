@@ -13,14 +13,14 @@ import (
 func Test_Create(t *testing.T) {
 	tests := []struct {
 		name              string
-		account           domain.Account
+		input             domain.Account
 		accountRepository *mock.MockRepository
-		expectedOutput    domain.Account
+		output            domain.Account
 		wantError         bool
 	}{
 		{
 			name: "Success",
-			account: domain.Account{
+			input: domain.Account{
 				DocumentNumber: "12345678900",
 			},
 			accountRepository: func() *mock.MockRepository {
@@ -33,7 +33,7 @@ func Test_Create(t *testing.T) {
 				}, nil)
 				return mockRepo
 			}(),
-			expectedOutput: domain.Account{
+			output: domain.Account{
 				AccountID:      1,
 				DocumentNumber: "12345678900",
 			},
@@ -41,7 +41,7 @@ func Test_Create(t *testing.T) {
 		},
 		{
 			name: "Error creating account",
-			account: domain.Account{
+			input: domain.Account{
 				DocumentNumber: "12345678900",
 			},
 			accountRepository: func() *mock.MockRepository {
@@ -51,21 +51,21 @@ func Test_Create(t *testing.T) {
 				}).Return(domain.Account{}, errors.New("exec error"))
 				return mockRepo
 			}(),
-			expectedOutput: domain.Account{},
-			wantError:      true,
+			output:    domain.Account{},
+			wantError: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			useCase := NewUseCase(tt.accountRepository)
-			account, err := useCase.Create(context.Background(), tt.account)
+			account, err := useCase.Create(context.Background(), tt.input)
 			if tt.wantError {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
 			}
-			assert.Equal(t, tt.expectedOutput, account)
+			assert.Equal(t, tt.output, account)
 		})
 	}
 }

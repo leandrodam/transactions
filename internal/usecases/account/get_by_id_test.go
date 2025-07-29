@@ -13,14 +13,14 @@ import (
 func Test_GetByID(t *testing.T) {
 	tests := []struct {
 		name              string
-		accountID         int
+		input             int
 		accountRepository *mock.MockRepository
-		expectedAccount   domain.Account
+		output            domain.Account
 		wantError         bool
 	}{
 		{
-			name:      "Success",
-			accountID: 1,
+			name:  "Success",
+			input: 1,
 			accountRepository: func() *mock.MockRepository {
 				mockRepo := mock.NewMockRepository(t)
 				mockRepo.On("GetByID", context.Background(), 1).
@@ -30,36 +30,36 @@ func Test_GetByID(t *testing.T) {
 					}, nil)
 				return mockRepo
 			}(),
-			expectedAccount: domain.Account{
+			output: domain.Account{
 				AccountID:      1,
 				DocumentNumber: "12345678900",
 			},
 			wantError: false,
 		},
 		{
-			name:      "Error fetching account by id",
-			accountID: 1,
+			name:  "Error fetching account by id",
+			input: 1,
 			accountRepository: func() *mock.MockRepository {
 				mockRepo := mock.NewMockRepository(t)
 				mockRepo.On("GetByID", context.Background(), 1).
 					Return(domain.Account{}, errors.New("exec error"))
 				return mockRepo
 			}(),
-			expectedAccount: domain.Account{},
-			wantError:       true,
+			output:    domain.Account{},
+			wantError: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			useCase := NewUseCase(tt.accountRepository)
-			account, err := useCase.GetByID(context.Background(), tt.accountID)
+			account, err := useCase.GetByID(context.Background(), tt.input)
 			if tt.wantError {
 				assert.Error(t, err)
 			} else {
 				assert.NoError(t, err)
 			}
-			assert.Equal(t, tt.expectedAccount, account)
+			assert.Equal(t, tt.output, account)
 		})
 	}
 }

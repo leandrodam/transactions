@@ -13,28 +13,12 @@ import (
 
 func Test_Create(t *testing.T) {
 	tests := []struct {
-		name           string
-		input          domain.Account
-		mockFunc       func(sqlmock.Sqlmock)
-		expectedOutput domain.Account
-		expectedError  error
+		name          string
+		input         domain.Account
+		mockFunc      func(sqlmock.Sqlmock)
+		output        domain.Account
+		expectedError error
 	}{
-		{
-			name: "Success",
-			input: domain.Account{
-				DocumentNumber: "12345678900",
-			},
-			mockFunc: func(mock sqlmock.Sqlmock) {
-				mock.ExpectExec("INSERT INTO account").
-					WithArgs("12345678900").
-					WillReturnResult(sqlmock.NewResult(1, 1))
-			},
-			expectedOutput: domain.Account{
-				AccountID:      1,
-				DocumentNumber: "12345678900",
-			},
-			expectedError: nil,
-		},
 		{
 			name: "Duplicate entry",
 			input: domain.Account{
@@ -45,21 +29,37 @@ func Test_Create(t *testing.T) {
 					WithArgs("12345678900").
 					WillReturnError(&mysql.MySQLError{Number: 1062})
 			},
-			expectedOutput: domain.Account{},
-			expectedError:  exceptions.ErrConflict,
+			output:        domain.Account{},
+			expectedError: exceptions.ErrConflict,
 		},
 		{
-			name: "Internal error",
+			name: "Error fetching last insert id",
 			input: domain.Account{
 				DocumentNumber: "12345678900",
 			},
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				mock.ExpectExec("INSERT INTO account").
 					WithArgs("12345678900").
-					WillReturnError(&mysql.MySQLError{Number: 1})
+					WillReturnResult(sqlmock.NewErrorResult(exceptions.ErrInternal))
 			},
-			expectedOutput: domain.Account{},
-			expectedError:  exceptions.ErrInternal,
+			output:        domain.Account{},
+			expectedError: exceptions.ErrInternal,
+		},
+		{
+			name: "Success",
+			input: domain.Account{
+				DocumentNumber: "12345678900",
+			},
+			mockFunc: func(mock sqlmock.Sqlmock) {
+				mock.ExpectExec("INSERT INTO account").
+					WithArgs("12345678900").
+					WillReturnResult(sqlmock.NewResult(1, 1))
+			},
+			output: domain.Account{
+				AccountID:      1,
+				DocumentNumber: "12345678900",
+			},
+			expectedError: nil,
 		},
 	}
 
@@ -77,7 +77,7 @@ func Test_Create(t *testing.T) {
 
 			account, err := repo.Create(context.Background(), tt.input)
 			assert.Equal(t, tt.expectedError, err)
-			assert.Equal(t, tt.expectedOutput, account)
+			assert.Equal(t, tt.output, account)
 
 			err = mock.ExpectationsWereMet()
 			assert.NoError(t, err)

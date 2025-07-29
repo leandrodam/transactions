@@ -13,15 +13,49 @@ import (
 
 func Test_GetById(t *testing.T) {
 	tests := []struct {
-		name            string
-		AccountID       int
-		mockFunc        func(sqlmock.Sqlmock)
-		expectedAccount domain.Account
-		expectedError   error
+		name          string
+		input         int
+		mockFunc      func(sqlmock.Sqlmock)
+		output        domain.Account
+		expectedError error
 	}{
 		{
-			name:      "Success",
-			AccountID: 1,
+			name:  "Internal error",
+			input: 1,
+			mockFunc: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery("SELECT account_id, document_number FROM account").
+					WithArgs(1).
+					WillReturnError(&mysql.MySQLError{Number: 1})
+			},
+			output:        domain.Account{},
+			expectedError: exceptions.ErrInternal,
+		},
+		{
+			name:  "Account not found",
+			input: 1,
+			mockFunc: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery("SELECT account_id, document_number FROM account").
+					WithArgs(1).
+					WillReturnRows(sqlmock.NewRows([]string{"account_id", "document_number"}))
+			},
+			output:        domain.Account{},
+			expectedError: exceptions.ErrAccountNotFound,
+		},
+		{
+			name:  "Error rows scan",
+			input: 1,
+			mockFunc: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery("SELECT account_id, document_number FROM account").
+					WithArgs(1).
+					WillReturnRows(sqlmock.NewRows([]string{"account_id", "document_number"}).
+						AddRow("erro", "12345678900"))
+			},
+			output:        domain.Account{},
+			expectedError: exceptions.ErrInternal,
+		},
+		{
+			name:  "Success",
+			input: 1,
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				mock.ExpectQuery("SELECT account_id, document_number FROM account").
 					WithArgs(1).
@@ -30,33 +64,11 @@ func Test_GetById(t *testing.T) {
 							AddRow(1, "12345678900"),
 					)
 			},
-			expectedAccount: domain.Account{
+			output: domain.Account{
 				AccountID:      1,
 				DocumentNumber: "12345678900",
 			},
 			expectedError: nil,
-		},
-		{
-			name:      "Account not found",
-			AccountID: 1,
-			mockFunc: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery("SELECT account_id, document_number FROM account").
-					WithArgs(1).
-					WillReturnRows(sqlmock.NewRows([]string{"account_id", "document_number"}))
-			},
-			expectedAccount: domain.Account{},
-			expectedError:   exceptions.ErrAccountNotFound,
-		},
-		{
-			name:      "Internal error",
-			AccountID: 1,
-			mockFunc: func(mock sqlmock.Sqlmock) {
-				mock.ExpectQuery("SELECT account_id, document_number FROM account").
-					WithArgs(1).
-					WillReturnError(&mysql.MySQLError{Number: 1})
-			},
-			expectedAccount: domain.Account{},
-			expectedError:   exceptions.ErrInternal,
 		},
 	}
 
@@ -72,9 +84,9 @@ func Test_GetById(t *testing.T) {
 
 			repo := NewRepository(db)
 
-			account, err := repo.GetByID(context.Background(), tt.AccountID)
+			account, err := repo.GetByID(context.Background(), tt.input)
 			assert.Equal(t, tt.expectedError, err)
-			assert.Equal(t, tt.expectedAccount, account)
+			assert.Equal(t, tt.output, account)
 
 			err = mock.ExpectationsWereMet()
 			assert.NoError(t, err)
