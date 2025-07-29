@@ -33,7 +33,7 @@ The project uses environment variables for configuration. Follow these steps:
    nano .env
    ```
 
-The `example.env` file contains all necessary variables with example values. Make sure to adjust the values according to your environment:
+The `example.env` file contains all necessary variables. Make sure to adjust the values according to your environment:
 
 - Application name, environment and port
 - MySQL database configurations
@@ -78,15 +78,6 @@ The `example.env` file contains all necessary variables with example values. Mak
 The project includes a Makefile with useful commands for development:
 
 ```bash
-# Show the help menu with all commands
-make help
-
-# Run go mod tidy and vendor
-make vendor
-
-# Run tests
-make test
-
 # Start services with docker compose
 make up
 
@@ -108,11 +99,20 @@ make logs
 # List docker compose services
 make ps
 
+# Run tests
+make test
+
 # Format Go code
 make fmt
 
 # Run linter
 make lint
+
+# Run go mod tidy and vendor
+make vendor
+
+# Show the help menu with all commands
+make help
 ```
 
 ### Using Docker Compose Directly
