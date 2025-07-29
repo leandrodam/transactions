@@ -11,12 +11,12 @@ import (
 func (h *handler) Create(c echo.Context) error {
 	var req CreateAccountRequest
 	if err := c.Bind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.ErrBadRequest.ErrorJSON())
+		return c.JSON(http.StatusBadRequest, exceptions.ErrBadRequest.ErrorJSON())
 	}
 
 	if err := c.Validate(&req); err != nil {
 		e := exceptions.GetException(err).(*exceptions.Exception)
-		c.JSON(http.StatusBadRequest, e.ErrorJSON())
+		return c.JSON(http.StatusBadRequest, e.ErrorJSON())
 	}
 
 	account := domain.Account{

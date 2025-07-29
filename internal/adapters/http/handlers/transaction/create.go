@@ -12,12 +12,12 @@ import (
 func (h *handler) Create(c echo.Context) error {
 	var req CreateTransactionRequest
 	if err := c.Bind(&req); err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.ErrBadRequest.ErrorJSON())
+		return c.JSON(http.StatusBadRequest, exceptions.ErrBadRequest.ErrorJSON())
 	}
 
 	if err := c.Validate(&req); err != nil {
 		e := exceptions.GetException(err).(*exceptions.Exception)
-		return c.JSON(e.StatusCode, e.Messages)
+		return c.JSON(e.StatusCode, e.ErrorJSON())
 	}
 
 	transaction := domain.Transaction{
@@ -32,7 +32,7 @@ func (h *handler) Create(c echo.Context) error {
 	transaction, err := h.transactionUseCase.Create(c.Request().Context(), transaction)
 	if err != nil {
 		e := exceptions.GetException(err).(*exceptions.Exception)
-		return c.JSON(e.StatusCode, e.Messages)
+		return c.JSON(e.StatusCode, e.ErrorJSON())
 	}
 
 	return c.JSON(http.StatusCreated, map[string]any{"data": transaction})

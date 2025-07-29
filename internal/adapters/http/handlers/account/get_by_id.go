@@ -11,7 +11,7 @@ import (
 func (h *handler) GetByID(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("accountId"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, exceptions.ErrInvalidAccountID.ErrorJSON())
+		return c.JSON(http.StatusBadRequest, exceptions.ErrInvalidAccountID.ErrorJSON())
 	}
 
 	account, err := h.accountUseCase.GetByID(c.Request().Context(), id)
