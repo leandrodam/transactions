@@ -2,21 +2,10 @@ package transaction
 
 import (
 	"context"
-	"database/sql"
 
 	domain "github.com/leandrodam/transactions/internal/domain/transaction"
 	"github.com/leandrodam/transactions/internal/infrastructure/exceptions"
 )
-
-type repository struct {
-	db *sql.DB
-}
-
-func NewRepository(db *sql.DB) domain.Repository {
-	return &repository{
-		db: db,
-	}
-}
 
 func (r *repository) Create(ctx context.Context, transaction domain.Transaction) (domain.Transaction, error) {
 	query := `INSERT INTO transaction (account_id, operation_type_id, amount, event_date) VALUES (?,?,?,?)`
