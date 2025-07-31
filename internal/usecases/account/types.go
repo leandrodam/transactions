@@ -2,7 +2,6 @@ package account
 
 import (
 	"context"
-	"errors"
 
 	domain "github.com/leandrodam/transactions/internal/domain/account"
 )
@@ -21,8 +20,3 @@ func NewUseCase(accountRepository domain.Repository) UseCase {
 		accountRepository: accountRepository,
 	}
 }
-
-var (
-	ErrInvalidAccountID      = errors.New("invalid account id")
-	ErrInvalidDocumentNumber = errors.New("invalid document number")
-)
