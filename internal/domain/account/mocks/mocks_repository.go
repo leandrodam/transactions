@@ -104,12 +104,12 @@ func (_c *MockRepository_Create_Call) RunAndReturn(run func(ctx context.Context,
 	return _c
 }
 
-// GetByID provides a mock function for the type MockRepository
-func (_mock *MockRepository) GetByID(ctx context.Context, id int) (account.Account, error) {
+// Find provides a mock function for the type MockRepository
+func (_mock *MockRepository) Find(ctx context.Context, id int) (account.Account, error) {
 	ret := _mock.Called(ctx, id)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByID")
+		panic("no return value specified for Find")
 	}
 
 	var r0 account.Account
@@ -130,19 +130,19 @@ func (_mock *MockRepository) GetByID(ctx context.Context, id int) (account.Accou
 	return r0, r1
 }
 
-// MockRepository_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
-type MockRepository_GetByID_Call struct {
+// MockRepository_Find_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Find'
+type MockRepository_Find_Call struct {
 	*mock.Call
 }
 
-// GetByID is a helper method to define mock.On call
+// Find is a helper method to define mock.On call
 //   - ctx context.Context
 //   - id int
-func (_e *MockRepository_Expecter) GetByID(ctx interface{}, id interface{}) *MockRepository_GetByID_Call {
-	return &MockRepository_GetByID_Call{Call: _e.mock.On("GetByID", ctx, id)}
+func (_e *MockRepository_Expecter) Find(ctx interface{}, id interface{}) *MockRepository_Find_Call {
+	return &MockRepository_Find_Call{Call: _e.mock.On("Find", ctx, id)}
 }
 
-func (_c *MockRepository_GetByID_Call) Run(run func(ctx context.Context, id int)) *MockRepository_GetByID_Call {
+func (_c *MockRepository_Find_Call) Run(run func(ctx context.Context, id int)) *MockRepository_Find_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -160,12 +160,75 @@ func (_c *MockRepository_GetByID_Call) Run(run func(ctx context.Context, id int)
 	return _c
 }
 
-func (_c *MockRepository_GetByID_Call) Return(account1 account.Account, err error) *MockRepository_GetByID_Call {
+func (_c *MockRepository_Find_Call) Return(account1 account.Account, err error) *MockRepository_Find_Call {
 	_c.Call.Return(account1, err)
 	return _c
 }
 
-func (_c *MockRepository_GetByID_Call) RunAndReturn(run func(ctx context.Context, id int) (account.Account, error)) *MockRepository_GetByID_Call {
+func (_c *MockRepository_Find_Call) RunAndReturn(run func(ctx context.Context, id int) (account.Account, error)) *MockRepository_Find_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateBalance provides a mock function for the type MockRepository
+func (_mock *MockRepository) UpdateBalance(ctx context.Context, accountID int, amount float64) error {
+	ret := _mock.Called(ctx, accountID, amount)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateBalance")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int, float64) error); ok {
+		r0 = returnFunc(ctx, accountID, amount)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockRepository_UpdateBalance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateBalance'
+type MockRepository_UpdateBalance_Call struct {
+	*mock.Call
+}
+
+// UpdateBalance is a helper method to define mock.On call
+//   - ctx context.Context
+//   - accountID int
+//   - amount float64
+func (_e *MockRepository_Expecter) UpdateBalance(ctx interface{}, accountID interface{}, amount interface{}) *MockRepository_UpdateBalance_Call {
+	return &MockRepository_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, accountID, amount)}
+}
+
+func (_c *MockRepository_UpdateBalance_Call) Run(run func(ctx context.Context, accountID int, amount float64)) *MockRepository_UpdateBalance_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 int
+		if args[1] != nil {
+			arg1 = args[1].(int)
+		}
+		var arg2 float64
+		if args[2] != nil {
+			arg2 = args[2].(float64)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRepository_UpdateBalance_Call) Return(err error) *MockRepository_UpdateBalance_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockRepository_UpdateBalance_Call) RunAndReturn(run func(ctx context.Context, accountID int, amount float64) error) *MockRepository_UpdateBalance_Call {
 	_c.Call.Return(run)
 	return _c
 }

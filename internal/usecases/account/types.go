@@ -8,7 +8,8 @@ import (
 
 type UseCase interface {
 	Create(ctx context.Context, account domain.Account) (domain.Account, error)
-	GetByID(ctx context.Context, accountID int) (domain.Account, error)
+	UpdateBalance(ctx context.Context, accountID int, amount float64) error
+	Find(ctx context.Context, accountID int) (domain.Account, error)
 }
 
 type useCase struct {

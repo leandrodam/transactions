@@ -2,6 +2,7 @@ package account
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	domain "github.com/leandrodam/transactions/internal/domain/account"
@@ -30,4 +31,19 @@ func (h *handler) Create(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, map[string]any{"data": account})
+}
+
+func (h *handler) Find(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("accountId"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, exceptions.ErrInvalidAccountID.ErrorJSON())
+	}
+
+	account, err := h.accountUseCase.Find(c.Request().Context(), id)
+	if err != nil {
+		e := exceptions.GetException(err).(*exceptions.Exception)
+		return c.JSON(e.StatusCode, e.ErrorJSON())
+	}
+
+	return c.JSON(http.StatusOK, map[string]any{"data": account})
 }

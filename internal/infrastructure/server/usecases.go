@@ -7,8 +7,10 @@ import (
 )
 
 func NewUseCases(services infrastructure.Services) infrastructure.UseCases {
-	return infrastructure.UseCases{
-		Account:     account.NewUseCase(services.Account),
-		Transaction: transaction.NewUseCase(services.Transaction),
-	}
+	useCases := infrastructure.UseCases{}
+
+	useCases.Account = account.NewUseCase(services.Account)
+	useCases.Transaction = transaction.NewUseCase(services.Transaction, services.Account)
+
+	return useCases
 }

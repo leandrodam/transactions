@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	accountmocks "github.com/leandrodam/transactions/internal/domain/account/mocks"
 	domain "github.com/leandrodam/transactions/internal/domain/transaction"
 	mocks "github.com/leandrodam/transactions/internal/domain/transaction/mocks"
 	"github.com/stretchr/testify/assert"
@@ -19,6 +20,7 @@ func Test_Create(t *testing.T) {
 		name                  string
 		input                 domain.Transaction
 		transactionRepository *mocks.MockRepository
+		accountRepository     *accountmocks.MockRepository
 		output                domain.Transaction
 		wantError             bool
 	}{
@@ -31,14 +33,14 @@ func Test_Create(t *testing.T) {
 				EventDate:       eventDate,
 			},
 			transactionRepository: func() *mocks.MockRepository {
-				mockRepo := mocks.NewMockRepository(t)
-				mockRepo.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
+				m := mocks.NewMockRepository(t)
+				m.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
 					return txn.AccountID == 1 &&
 						txn.OperationTypeID == 1 &&
 						txn.Amount == -123.45 &&
 						time.Since(txn.EventDate) < 2*time.Second
 				})).Return(domain.Transaction{}, errors.New("exec error"))
-				return mockRepo
+				return m
 			}(),
 			output:    domain.Transaction{},
 			wantError: true,
@@ -52,8 +54,8 @@ func Test_Create(t *testing.T) {
 				EventDate:       eventDate,
 			},
 			transactionRepository: func() *mocks.MockRepository {
-				mockRepo := mocks.NewMockRepository(t)
-				mockRepo.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
+				m := mocks.NewMockRepository(t)
+				m.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
 					return txn.AccountID == 1 &&
 						txn.OperationTypeID == 4 &&
 						txn.Amount == 123.45 &&
@@ -65,7 +67,7 @@ func Test_Create(t *testing.T) {
 					Amount:          123.45,
 					EventDate:       eventDate,
 				}, nil)
-				return mockRepo
+				return m
 			}(),
 			output: domain.Transaction{
 				TransactionID:   1,
@@ -85,8 +87,8 @@ func Test_Create(t *testing.T) {
 				EventDate:       eventDate,
 			},
 			transactionRepository: func() *mocks.MockRepository {
-				mockRepo := mocks.NewMockRepository(t)
-				mockRepo.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
+				m := mocks.NewMockRepository(t)
+				m.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
 					return txn.AccountID == 1 &&
 						txn.OperationTypeID == 4 &&
 						txn.Amount == 123.45 &&
@@ -98,7 +100,7 @@ func Test_Create(t *testing.T) {
 					Amount:          123.45,
 					EventDate:       eventDate,
 				}, nil)
-				return mockRepo
+				return m
 			}(),
 			output: domain.Transaction{
 				TransactionID:   1,
@@ -113,7 +115,7 @@ func Test_Create(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			useCase := NewUseCase(tt.transactionRepository)
+			useCase := NewUseCase(tt.transactionRepository, tt.accountRepository)
 			transaction, err := useCase.Create(context.Background(), tt.input)
 			if tt.wantError {
 				assert.Error(t, err)

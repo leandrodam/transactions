@@ -8,7 +8,7 @@ import (
 type (
 	Handler interface {
 		Create(c echo.Context) error
-		GetByID(c echo.Context) error
+		Find(c echo.Context) error
 	}
 
 	handler struct {

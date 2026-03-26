@@ -104,12 +104,12 @@ func (_c *MockUseCase_Create_Call) RunAndReturn(run func(ctx context.Context, ac
 	return _c
 }
 
-// GetByID provides a mock function for the type MockUseCase
-func (_mock *MockUseCase) GetByID(ctx context.Context, accountID int) (account.Account, error) {
+// Find provides a mock function for the type MockUseCase
+func (_mock *MockUseCase) Find(ctx context.Context, accountID int) (account.Account, error) {
 	ret := _mock.Called(ctx, accountID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetByID")
+		panic("no return value specified for Find")
 	}
 
 	var r0 account.Account
@@ -130,19 +130,19 @@ func (_mock *MockUseCase) GetByID(ctx context.Context, accountID int) (account.A
 	return r0, r1
 }
 
-// MockUseCase_GetByID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetByID'
-type MockUseCase_GetByID_Call struct {
+// MockUseCase_Find_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Find'
+type MockUseCase_Find_Call struct {
 	*mock.Call
 }
 
-// GetByID is a helper method to define mock.On call
+// Find is a helper method to define mock.On call
 //   - ctx context.Context
 //   - accountID int
-func (_e *MockUseCase_Expecter) GetByID(ctx interface{}, accountID interface{}) *MockUseCase_GetByID_Call {
-	return &MockUseCase_GetByID_Call{Call: _e.mock.On("GetByID", ctx, accountID)}
+func (_e *MockUseCase_Expecter) Find(ctx interface{}, accountID interface{}) *MockUseCase_Find_Call {
+	return &MockUseCase_Find_Call{Call: _e.mock.On("Find", ctx, accountID)}
 }
 
-func (_c *MockUseCase_GetByID_Call) Run(run func(ctx context.Context, accountID int)) *MockUseCase_GetByID_Call {
+func (_c *MockUseCase_Find_Call) Run(run func(ctx context.Context, accountID int)) *MockUseCase_Find_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -160,12 +160,75 @@ func (_c *MockUseCase_GetByID_Call) Run(run func(ctx context.Context, accountID 
 	return _c
 }
 
-func (_c *MockUseCase_GetByID_Call) Return(account1 account.Account, err error) *MockUseCase_GetByID_Call {
+func (_c *MockUseCase_Find_Call) Return(account1 account.Account, err error) *MockUseCase_Find_Call {
 	_c.Call.Return(account1, err)
 	return _c
 }
 
-func (_c *MockUseCase_GetByID_Call) RunAndReturn(run func(ctx context.Context, accountID int) (account.Account, error)) *MockUseCase_GetByID_Call {
+func (_c *MockUseCase_Find_Call) RunAndReturn(run func(ctx context.Context, accountID int) (account.Account, error)) *MockUseCase_Find_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateBalance provides a mock function for the type MockUseCase
+func (_mock *MockUseCase) UpdateBalance(ctx context.Context, accountID int, amount float64) error {
+	ret := _mock.Called(ctx, accountID, amount)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateBalance")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int, float64) error); ok {
+		r0 = returnFunc(ctx, accountID, amount)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockUseCase_UpdateBalance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateBalance'
+type MockUseCase_UpdateBalance_Call struct {
+	*mock.Call
+}
+
+// UpdateBalance is a helper method to define mock.On call
+//   - ctx context.Context
+//   - accountID int
+//   - amount float64
+func (_e *MockUseCase_Expecter) UpdateBalance(ctx interface{}, accountID interface{}, amount interface{}) *MockUseCase_UpdateBalance_Call {
+	return &MockUseCase_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, accountID, amount)}
+}
+
+func (_c *MockUseCase_UpdateBalance_Call) Run(run func(ctx context.Context, accountID int, amount float64)) *MockUseCase_UpdateBalance_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 int
+		if args[1] != nil {
+			arg1 = args[1].(int)
+		}
+		var arg2 float64
+		if args[2] != nil {
+			arg2 = args[2].(float64)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockUseCase_UpdateBalance_Call) Return(err error) *MockUseCase_UpdateBalance_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockUseCase_UpdateBalance_Call) RunAndReturn(run func(ctx context.Context, accountID int, amount float64) error) *MockUseCase_UpdateBalance_Call {
 	_c.Call.Return(run)
 	return _c
 }

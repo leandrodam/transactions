@@ -3,19 +3,22 @@ package transaction
 import (
 	"context"
 
-	domain "github.com/leandrodam/transactions/internal/domain/transaction"
+	accountdomain "github.com/leandrodam/transactions/internal/domain/account"
+	transactiondomain "github.com/leandrodam/transactions/internal/domain/transaction"
 )
 
 type UseCase interface {
-	Create(ctx context.Context, transaction domain.Transaction) (domain.Transaction, error)
+	Create(ctx context.Context, transaction transactiondomain.Transaction) (transactiondomain.Transaction, error)
 }
 
 type useCase struct {
-	transactionRepository domain.Repository
+	transactionRepository transactiondomain.Repository
+	accountRepository     accountdomain.Repository
 }
 
-func NewUseCase(transactionRepository domain.Repository) UseCase {
+func NewUseCase(transactionRepository transactiondomain.Repository, accountRepository accountdomain.Repository) UseCase {
 	return &useCase{
 		transactionRepository: transactionRepository,
+		accountRepository:     accountRepository,
 	}
 }

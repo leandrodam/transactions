@@ -9,7 +9,7 @@ func (s *Server) registerRoutes(handlers infrastructure.Handlers) {
 
 	accounts := v1.Group("/accounts")
 	accounts.POST("", handlers.Account.Create)
-	accounts.GET("/:accountId", handlers.Account.GetByID)
+	accounts.GET("/:accountId", handlers.Account.Find)
 
 	transactions := v1.Group("/transactions")
 	transactions.POST("", handlers.Transaction.Create)
