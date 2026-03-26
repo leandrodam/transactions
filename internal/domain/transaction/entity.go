@@ -20,6 +20,6 @@ func (t *Transaction) AdjustAmountByOperationType() {
 		operationtypedomain.TypeNormalPurchase,
 		operationtypedomain.TypePurchaseWithInstallments,
 		operationtypedomain.TypeWithdrawal:
-		t.Amount = -1 * t.Amount
+		t.Amount = -t.Amount
 	}
 }
