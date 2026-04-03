@@ -125,7 +125,7 @@ func Test_Create(t *testing.T) {
 	}
 }
 
-func Test_GetById(t *testing.T) {
+func Test_Find(t *testing.T) {
 	type output struct {
 		statusCode int
 		messages   map[string]any
@@ -150,7 +150,7 @@ func Test_GetById(t *testing.T) {
 			input: "1",
 			useCase: func() *mocks.MockUseCase {
 				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("GetByID", mock.Anything, 1).
+				mockUseCase.On("Find", mock.Anything, 1).
 					Return(domain.Account{}, exceptions.ErrInternal)
 				return mockUseCase
 			}(),
@@ -164,7 +164,7 @@ func Test_GetById(t *testing.T) {
 			input: "1",
 			useCase: func() *mocks.MockUseCase {
 				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("GetByID", mock.Anything, 1).
+				mockUseCase.On("Find", mock.Anything, 1).
 					Return(domain.Account{
 						AccountID:      1,
 						DocumentNumber: "12345678900",

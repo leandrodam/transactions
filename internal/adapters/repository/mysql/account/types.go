@@ -1,17 +1,14 @@
 package account
 
 import (
-	"database/sql"
-
 	domain "github.com/leandrodam/transactions/internal/domain/account"
+	"github.com/leandrodam/transactions/internal/infrastructure/transactor"
 )
 
 type repository struct {
-	db *sql.DB
+	dbGetter transactor.DBGetter
 }
 
-func NewRepository(db *sql.DB) domain.Repository {
-	return &repository{
-		db: db,
-	}
+func NewRepository(dbGetter transactor.DBGetter) domain.Repository {
+	return &repository{dbGetter: dbGetter}
 }

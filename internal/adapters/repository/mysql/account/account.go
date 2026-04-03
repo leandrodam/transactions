@@ -10,7 +10,7 @@ import (
 func (r *repository) Create(ctx context.Context, account domain.Account) (domain.Account, error) {
 	query := `INSERT INTO account (document_number) VALUES (?)`
 
-	result, err := r.db.ExecContext(ctx, query, account.DocumentNumber)
+	result, err := r.dbGetter(ctx).ExecContext(ctx, query, account.DocumentNumber)
 	if err != nil {
 		return domain.Account{}, exceptions.GetException(err)
 	}
@@ -28,7 +28,7 @@ func (r *repository) Create(ctx context.Context, account domain.Account) (domain
 func (r *repository) UpdateBalance(ctx context.Context, accountID int, amount float64) error {
 	query := `UPDATE account SET available_credit = available_credit + ? WHERE account_id = ?`
 
-	_, err := r.db.ExecContext(ctx, query, amount, accountID)
+	_, err := r.dbGetter(ctx).ExecContext(ctx, query, amount, accountID)
 	if err != nil {
 		return exceptions.GetException(err)
 	}
@@ -39,7 +39,7 @@ func (r *repository) UpdateBalance(ctx context.Context, accountID int, amount fl
 func (r *repository) Find(ctx context.Context, id int) (domain.Account, error) {
 	query := `SELECT account_id, document_number, available_credit FROM account WHERE account_id = ?`
 
-	rows, err := r.db.QueryContext(ctx, query, id)
+	rows, err := r.dbGetter(ctx).QueryContext(ctx, query, id)
 	if err != nil {
 		return domain.Account{}, exceptions.GetException(err)
 	}

@@ -8,22 +8,32 @@ import (
 )
 
 func (uc *useCase) Create(ctx context.Context, transaction domain.Transaction) (domain.Transaction, error) {
-	transaction.AdjustAmountByOperationType()
+	err := uc.transactor.WithinTransaction(ctx, func(ctx context.Context) error {
+		transaction.AdjustAmountByOperationType()
 
-	account, err := uc.accountRepository.Find(ctx, transaction.AccountID)
+		account, err := uc.accountRepository.Find(ctx, transaction.AccountID)
+		if err != nil {
+			return err
+		}
+
+		account.AvailableCredit += transaction.Amount
+		if account.AvailableCredit < 0 {
+			return errors.New("negative balance")
+		}
+
+		err = uc.accountRepository.UpdateBalance(ctx, account.AccountID, transaction.Amount)
+		if err != nil {
+			return err
+		}
+
+		transaction, err = uc.transactionRepository.Create(ctx, transaction)
+
+		return err
+	})
+
 	if err != nil {
 		return domain.Transaction{}, err
 	}
 
-	account.AvailableCredit += transaction.Amount
-	if account.AvailableCredit < 0 {
-		return domain.Transaction{}, errors.New("negative balance")
-	}
-
-	err = uc.accountRepository.UpdateBalance(ctx, account.AccountID, transaction.Amount)
-	if err != nil {
-		return domain.Transaction{}, err
-	}
-
-	return uc.transactionRepository.Create(ctx, transaction)
+	return transaction, nil
 }

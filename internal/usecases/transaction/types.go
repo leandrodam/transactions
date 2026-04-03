@@ -5,6 +5,7 @@ import (
 
 	accountdomain "github.com/leandrodam/transactions/internal/domain/account"
 	transactiondomain "github.com/leandrodam/transactions/internal/domain/transaction"
+	"github.com/leandrodam/transactions/internal/infrastructure/transactor"
 )
 
 type UseCase interface {
@@ -14,11 +15,13 @@ type UseCase interface {
 type useCase struct {
 	transactionRepository transactiondomain.Repository
 	accountRepository     accountdomain.Repository
+	transactor            transactor.Transactor
 }
 
-func NewUseCase(transactionRepository transactiondomain.Repository, accountRepository accountdomain.Repository) UseCase {
+func NewUseCase(transactionRepository transactiondomain.Repository, accountRepository accountdomain.Repository, transactor transactor.Transactor) UseCase {
 	return &useCase{
 		transactionRepository: transactionRepository,
 		accountRepository:     accountRepository,
+		transactor:            transactor,
 	}
 }

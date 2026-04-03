@@ -17,7 +17,7 @@ func (r *repository) Create(ctx context.Context, transaction domain.Transaction)
 		transaction.EventDate,
 	}
 
-	result, err := r.db.ExecContext(ctx, query, args...)
+	result, err := r.dbGetter(ctx).ExecContext(ctx, query, args...)
 	if err != nil {
 		return domain.Transaction{}, exceptions.GetException(err)
 	}

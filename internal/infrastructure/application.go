@@ -7,6 +7,7 @@ import (
 	transactionhandler "github.com/leandrodam/transactions/internal/adapters/http/handlers/transaction"
 	accountdomain "github.com/leandrodam/transactions/internal/domain/account"
 	transactiondomain "github.com/leandrodam/transactions/internal/domain/transaction"
+	"github.com/leandrodam/transactions/internal/infrastructure/transactor"
 	accountusecase "github.com/leandrodam/transactions/internal/usecases/account"
 	transactionusecase "github.com/leandrodam/transactions/internal/usecases/transaction"
 )
@@ -23,6 +24,7 @@ type Resources struct {
 }
 
 type Services struct {
+	Transactor  transactor.Transactor
 	Account     accountdomain.Repository
 	Transaction transactiondomain.Repository
 }

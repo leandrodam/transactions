@@ -10,7 +10,7 @@ func NewUseCases(services infrastructure.Services) infrastructure.UseCases {
 	useCases := infrastructure.UseCases{}
 
 	useCases.Account = account.NewUseCase(services.Account)
-	useCases.Transaction = transaction.NewUseCase(services.Transaction, services.Account)
+	useCases.Transaction = transaction.NewUseCase(services.Transaction, services.Account, services.Transactor)
 
 	return useCases
 }

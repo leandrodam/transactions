@@ -9,6 +9,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	domain "github.com/leandrodam/transactions/internal/domain/transaction"
 	"github.com/leandrodam/transactions/internal/infrastructure/exceptions"
+	"github.com/leandrodam/transactions/internal/infrastructure/transactor"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,7 +89,9 @@ func Test_Create(t *testing.T) {
 				tt.mockFunc(mock)
 			}
 
-			repo := NewRepository(db)
+			_, dbGetter := transactor.NewTransactor(db)
+
+			repo := NewRepository(dbGetter)
 
 			transaction, err := repo.Create(context.Background(), tt.input)
 			assert.Equal(t, tt.expectedError, err)

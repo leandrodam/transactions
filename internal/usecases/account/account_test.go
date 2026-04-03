@@ -71,7 +71,7 @@ func Test_Create(t *testing.T) {
 	}
 }
 
-func Test_GetByID(t *testing.T) {
+func Test_Find(t *testing.T) {
 	tests := []struct {
 		name              string
 		input             int
@@ -84,7 +84,7 @@ func Test_GetByID(t *testing.T) {
 			input: 1,
 			accountRepository: func() *mocks.MockRepository {
 				m := mocks.NewMockRepository(t)
-				m.On("GetByID", mock.Anything, 1).
+				m.On("Find", mock.Anything, 1).
 					Return(domain.Account{
 						AccountID:      1,
 						DocumentNumber: "12345678900",
@@ -102,7 +102,7 @@ func Test_GetByID(t *testing.T) {
 			input: 1,
 			accountRepository: func() *mocks.MockRepository {
 				m := mocks.NewMockRepository(t)
-				m.On("GetByID", mock.Anything, 1).
+				m.On("Find", mock.Anything, 1).
 					Return(domain.Account{}, errors.New("exec error"))
 				return m
 			}(),

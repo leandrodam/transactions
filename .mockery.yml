@@ -24,3 +24,6 @@ packages:
   github.com/leandrodam/transactions/internal/usecases/transaction:
     config:
       all: true
+  github.com/leandrodam/transactions/internal/infrastructure/transactor:
+    config:
+      all: true
