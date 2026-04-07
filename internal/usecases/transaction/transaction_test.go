@@ -12,6 +12,7 @@ import (
 	mocks "github.com/leandrodam/transactions/internal/domain/transaction/mocks"
 	"github.com/leandrodam/transactions/internal/infrastructure/transactor"
 	transactormocks "github.com/leandrodam/transactions/internal/infrastructure/transactor/mocks"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -57,7 +58,7 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			accountRepository: func() *accountmocks.MockRepository {
@@ -75,7 +76,7 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			accountRepository: func() *accountmocks.MockRepository {
@@ -84,7 +85,7 @@ func Test_Create(t *testing.T) {
 					Return(accountdomain.Account{
 						AccountID:       1,
 						DocumentNumber:  "12345",
-						AvailableCredit: 100,
+						AvailableCredit: decimal.NewFromFloat(100),
 					}, nil)
 				return m
 			}(),
@@ -97,7 +98,7 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			accountRepository: func() *accountmocks.MockRepository {
@@ -106,9 +107,9 @@ func Test_Create(t *testing.T) {
 					Return(accountdomain.Account{
 						AccountID:       1,
 						DocumentNumber:  "12345",
-						AvailableCredit: 1000,
+						AvailableCredit: decimal.NewFromFloat(1000),
 					}, nil)
-				m.On("UpdateBalance", ctx, 1, -123.45).
+				m.On("UpdateBalance", ctx, 1, decimal.NewFromFloat(-123.45)).
 					Return(errors.New("failed"))
 				return m
 			}(),
@@ -121,7 +122,7 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			accountRepository: func() *accountmocks.MockRepository {
@@ -130,9 +131,9 @@ func Test_Create(t *testing.T) {
 					Return(accountdomain.Account{
 						AccountID:       1,
 						DocumentNumber:  "12345",
-						AvailableCredit: 1000,
+						AvailableCredit: decimal.NewFromFloat(1000),
 					}, nil)
-				m.On("UpdateBalance", ctx, 1, -123.45).
+				m.On("UpdateBalance", ctx, 1, decimal.NewFromFloat(-123.45)).
 					Return(nil)
 				return m
 			}(),
@@ -151,7 +152,7 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			accountRepository: func() *accountmocks.MockRepository {
@@ -160,9 +161,9 @@ func Test_Create(t *testing.T) {
 					Return(accountdomain.Account{
 						AccountID:       1,
 						DocumentNumber:  "12345",
-						AvailableCredit: 1000,
+						AvailableCredit: decimal.NewFromFloat(1000),
 					}, nil)
-				m.On("UpdateBalance", ctx, 1, -123.45).
+				m.On("UpdateBalance", ctx, 1, decimal.NewFromFloat(-123.45)).
 					Return(nil)
 				return m
 			}(),
@@ -173,7 +174,7 @@ func Test_Create(t *testing.T) {
 						TransactionID:   1,
 						AccountID:       1,
 						OperationTypeID: 1,
-						Amount:          -123.45,
+						Amount:          decimal.NewFromFloat(-123.45),
 						EventDate:       eventDate,
 					}, nil)
 				return m
@@ -183,7 +184,7 @@ func Test_Create(t *testing.T) {
 				TransactionID:   1,
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          -123.45,
+				Amount:          decimal.NewFromFloat(-123.45),
 				EventDate:       eventDate,
 			},
 			wantError: false,

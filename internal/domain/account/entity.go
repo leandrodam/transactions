@@ -1,7 +1,9 @@
 package account
 
+import "github.com/shopspring/decimal"
+
 type Account struct {
 	AccountID       int
 	DocumentNumber  string
-	AvailableCredit float64
+	AvailableCredit decimal.Decimal
 }

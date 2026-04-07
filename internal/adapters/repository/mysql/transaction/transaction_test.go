@@ -10,6 +10,7 @@ import (
 	domain "github.com/leandrodam/transactions/internal/domain/transaction"
 	"github.com/leandrodam/transactions/internal/infrastructure/exceptions"
 	"github.com/leandrodam/transactions/internal/infrastructure/transactor"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,12 +29,12 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				mock.ExpectExec("INSERT INTO transaction").
-					WithArgs(1, 1, 123.45, eventDate).
+					WithArgs(1, 1, decimal.NewFromFloat(123.45), eventDate).
 					WillReturnError(&mysql.MySQLError{Number: 1062})
 			},
 			output:        domain.Transaction{},
@@ -44,12 +45,12 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				mock.ExpectExec("INSERT INTO transaction").
-					WithArgs(1, 1, 123.45, eventDate).
+					WithArgs(1, 1, decimal.NewFromFloat(123.45), eventDate).
 					WillReturnResult(sqlmock.NewErrorResult(exceptions.ErrInternal))
 			},
 			output:        domain.Transaction{},
@@ -60,19 +61,19 @@ func Test_Create(t *testing.T) {
 			input: domain.Transaction{
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				mock.ExpectExec("INSERT INTO transaction").
-					WithArgs(1, 1, 123.45, eventDate).
+					WithArgs(1, 1, decimal.NewFromFloat(123.45), eventDate).
 					WillReturnResult(sqlmock.NewResult(1, 1))
 			},
 			output: domain.Transaction{
 				TransactionID:   1,
 				AccountID:       1,
 				OperationTypeID: 1,
-				Amount:          123.45,
+				Amount:          decimal.NewFromFloat(123.45),
 				EventDate:       eventDate,
 			},
 			expectedError: nil,

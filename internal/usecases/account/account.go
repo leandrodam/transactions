@@ -4,6 +4,7 @@ import (
 	"context"
 
 	domain "github.com/leandrodam/transactions/internal/domain/account"
+	"github.com/shopspring/decimal"
 )
 
 func (uc *useCase) Create(ctx context.Context, account domain.Account) (domain.Account, error) {
@@ -14,6 +15,6 @@ func (uc *useCase) Find(ctx context.Context, accountID int) (domain.Account, err
 	return uc.accountRepository.Find(ctx, accountID)
 }
 
-func (uc *useCase) UpdateBalance(ctx context.Context, accountID int, amount float64) error {
+func (uc *useCase) UpdateBalance(ctx context.Context, accountID int, amount decimal.Decimal) error {
 	return uc.accountRepository.UpdateBalance(ctx, accountID, amount)
 }

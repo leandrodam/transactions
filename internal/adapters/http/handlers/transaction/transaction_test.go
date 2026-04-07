@@ -14,6 +14,7 @@ import (
 	"github.com/leandrodam/transactions/internal/infrastructure/exceptions"
 	"github.com/leandrodam/transactions/internal/infrastructure/validator"
 	mocks "github.com/leandrodam/transactions/internal/usecases/transaction/mocks"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -38,7 +39,7 @@ func Test_Create(t *testing.T) {
 				{
 					"account_id": "1",
 					"operation_type_id": "1",
-					"amount": "123.45"
+					"amount": 123.45
 				}
 			`),
 			output: output{
@@ -103,20 +104,6 @@ func Test_Create(t *testing.T) {
 			},
 		},
 		{
-			name: "Error: amount is required",
-			input: []byte(`
-				{
-					"account_id": 1,
-					"operation_type_id": 1,
-					"amount": null
-				}
-			`),
-			output: output{
-				statusCode: http.StatusBadRequest,
-				messages:   map[string]any{"errors": []string{"Amount is required."}},
-			},
-		},
-		{
 			name: "Error: amount must be gte=0",
 			input: []byte(`
 				{
@@ -140,14 +127,15 @@ func Test_Create(t *testing.T) {
 				}
 			`),
 			useCase: func() *mocks.MockUseCase {
-				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
+				m := mocks.NewMockUseCase(t)
+				m.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
 					return txn.AccountID == 1 &&
 						txn.OperationTypeID == 1 &&
-						txn.Amount == 123.45 &&
+						txn.Amount.Equal(decimal.NewFromFloat(123.45)) &&
 						time.Since(txn.EventDate) < 2*time.Second
-				})).Return(domain.Transaction{}, exceptions.ErrInternal)
-				return mockUseCase
+				})).
+					Return(domain.Transaction{}, exceptions.ErrInternal)
+				return m
 			}(),
 			output: output{
 				statusCode: http.StatusInternalServerError,
@@ -164,20 +152,20 @@ func Test_Create(t *testing.T) {
 				}
 			`),
 			useCase: func() *mocks.MockUseCase {
-				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
+				m := mocks.NewMockUseCase(t)
+				m.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
 					return txn.AccountID == 1 &&
 						txn.OperationTypeID == 1 &&
-						txn.Amount == 123.45 &&
+						txn.Amount.Equal(decimal.NewFromFloat(123.45)) &&
 						time.Since(txn.EventDate) < 2*time.Second
 				})).Return(domain.Transaction{
 					TransactionID:   1,
 					AccountID:       1,
 					OperationTypeID: 1,
-					Amount:          -123.45,
+					Amount:          decimal.NewFromFloat(-123.45),
 					EventDate:       eventDate,
 				}, nil)
-				return mockUseCase
+				return m
 			}(),
 			output: output{
 				statusCode: http.StatusCreated,
@@ -185,7 +173,7 @@ func Test_Create(t *testing.T) {
 					TransactionID:   1,
 					AccountID:       1,
 					OperationTypeID: 1,
-					Amount:          -123.45,
+					Amount:          decimal.NewFromFloat(-123.45),
 					EventDate:       eventDate,
 				}},
 			},
@@ -200,20 +188,20 @@ func Test_Create(t *testing.T) {
 				}
 			`),
 			useCase: func() *mocks.MockUseCase {
-				mockUseCase := mocks.NewMockUseCase(t)
-				mockUseCase.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
+				m := mocks.NewMockUseCase(t)
+				m.On("Create", mock.Anything, mock.MatchedBy(func(txn domain.Transaction) bool {
 					return txn.AccountID == 1 &&
 						txn.OperationTypeID == 4 &&
-						txn.Amount == 123.45 &&
+						txn.Amount.Equal(decimal.NewFromFloat(123.45)) &&
 						time.Since(txn.EventDate) < 2*time.Second
 				})).Return(domain.Transaction{
 					TransactionID:   1,
 					AccountID:       1,
 					OperationTypeID: 4,
-					Amount:          123.45,
+					Amount:          decimal.NewFromFloat(123.45),
 					EventDate:       eventDate,
 				}, nil)
-				return mockUseCase
+				return m
 			}(),
 			output: output{
 				statusCode: http.StatusCreated,
@@ -221,7 +209,7 @@ func Test_Create(t *testing.T) {
 					TransactionID:   1,
 					AccountID:       1,
 					OperationTypeID: 4,
-					Amount:          123.45,
+					Amount:          decimal.NewFromFloat(123.45),
 					EventDate:       eventDate,
 				}},
 			},

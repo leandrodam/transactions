@@ -9,6 +9,7 @@ import (
 	domain "github.com/leandrodam/transactions/internal/domain/account"
 	"github.com/leandrodam/transactions/internal/infrastructure/exceptions"
 	"github.com/leandrodam/transactions/internal/infrastructure/transactor"
+	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -92,17 +93,17 @@ func Test_UpdateBalance(t *testing.T) {
 	tests := []struct {
 		name          string
 		accountID     int
-		amount        float64
+		amount        decimal.Decimal
 		mockFunc      func(sqlmock.Sqlmock)
 		expectedError error
 	}{
 		{
 			name:      "Internal error",
 			accountID: 1,
-			amount:    100.00,
+			amount:    decimal.NewFromFloat(100),
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				mock.ExpectExec("UPDATE account SET available_credit = available_credit +").
-					WithArgs(100.00, 1).
+					WithArgs(decimal.NewFromFloat(100), 1).
 					WillReturnError(&mysql.MySQLError{Number: 1})
 			},
 			expectedError: exceptions.ErrInternal,
@@ -110,10 +111,10 @@ func Test_UpdateBalance(t *testing.T) {
 		{
 			name:      "Success",
 			accountID: 1,
-			amount:    100.00,
+			amount:    decimal.NewFromFloat(100),
 			mockFunc: func(mock sqlmock.Sqlmock) {
 				mock.ExpectExec("UPDATE account SET available_credit = available_credit +").
-					WithArgs(100.00, 1).
+					WithArgs(decimal.NewFromFloat(100), 1).
 					WillReturnResult(sqlmock.NewResult(0, 1))
 			},
 			expectedError: nil,
@@ -193,13 +194,13 @@ func Test_Find(t *testing.T) {
 					WithArgs(1).
 					WillReturnRows(
 						sqlmock.NewRows([]string{"account_id", "document_number", "available_credit"}).
-							AddRow(1, "12345678900", "300.00"),
+							AddRow(1, "12345678900", 300.0),
 					)
 			},
 			output: domain.Account{
 				AccountID:       1,
 				DocumentNumber:  "12345678900",
-				AvailableCredit: 300.00,
+				AvailableCredit: decimal.NewFromFloat(300.0),
 			},
 			expectedError: nil,
 		},

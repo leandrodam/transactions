@@ -3,6 +3,7 @@ package transaction
 import (
 	"github.com/labstack/echo/v4"
 	usecase "github.com/leandrodam/transactions/internal/usecases/transaction"
+	"github.com/shopspring/decimal"
 )
 
 type (
@@ -15,9 +16,9 @@ type (
 	}
 
 	CreateTransactionRequest struct {
-		AccountID       int     `json:"account_id" validate:"required,gt=0"`
-		OperationTypeID int     `json:"operation_type_id" validate:"required,gt=0"`
-		Amount          float64 `json:"amount" validate:"required,gte=0"`
+		AccountID       int             `json:"account_id" validate:"required,gt=0"`
+		OperationTypeID int             `json:"operation_type_id" validate:"required,gt=0"`
+		Amount          decimal.Decimal `json:"amount" validate:"dgte=0"`
 	}
 )
 

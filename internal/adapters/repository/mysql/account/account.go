@@ -5,6 +5,7 @@ import (
 
 	domain "github.com/leandrodam/transactions/internal/domain/account"
 	"github.com/leandrodam/transactions/internal/infrastructure/exceptions"
+	"github.com/shopspring/decimal"
 )
 
 func (r *repository) Create(ctx context.Context, account domain.Account) (domain.Account, error) {
@@ -25,7 +26,7 @@ func (r *repository) Create(ctx context.Context, account domain.Account) (domain
 	return account, nil
 }
 
-func (r *repository) UpdateBalance(ctx context.Context, accountID int, amount float64) error {
+func (r *repository) UpdateBalance(ctx context.Context, accountID int, amount decimal.Decimal) error {
 	query := `UPDATE account SET available_credit = available_credit + ? WHERE account_id = ?`
 
 	_, err := r.dbGetter(ctx).ExecContext(ctx, query, amount, accountID)

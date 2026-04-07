@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/leandrodam/transactions/internal/domain/account"
+	"github.com/shopspring/decimal"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -171,7 +172,7 @@ func (_c *MockUseCase_Find_Call) RunAndReturn(run func(ctx context.Context, acco
 }
 
 // UpdateBalance provides a mock function for the type MockUseCase
-func (_mock *MockUseCase) UpdateBalance(ctx context.Context, accountID int, amount float64) error {
+func (_mock *MockUseCase) UpdateBalance(ctx context.Context, accountID int, amount decimal.Decimal) error {
 	ret := _mock.Called(ctx, accountID, amount)
 
 	if len(ret) == 0 {
@@ -179,7 +180,7 @@ func (_mock *MockUseCase) UpdateBalance(ctx context.Context, accountID int, amou
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, int, float64) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int, decimal.Decimal) error); ok {
 		r0 = returnFunc(ctx, accountID, amount)
 	} else {
 		r0 = ret.Error(0)
@@ -195,12 +196,12 @@ type MockUseCase_UpdateBalance_Call struct {
 // UpdateBalance is a helper method to define mock.On call
 //   - ctx context.Context
 //   - accountID int
-//   - amount float64
+//   - amount decimal.Decimal
 func (_e *MockUseCase_Expecter) UpdateBalance(ctx interface{}, accountID interface{}, amount interface{}) *MockUseCase_UpdateBalance_Call {
 	return &MockUseCase_UpdateBalance_Call{Call: _e.mock.On("UpdateBalance", ctx, accountID, amount)}
 }
 
-func (_c *MockUseCase_UpdateBalance_Call) Run(run func(ctx context.Context, accountID int, amount float64)) *MockUseCase_UpdateBalance_Call {
+func (_c *MockUseCase_UpdateBalance_Call) Run(run func(ctx context.Context, accountID int, amount decimal.Decimal)) *MockUseCase_UpdateBalance_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -210,9 +211,9 @@ func (_c *MockUseCase_UpdateBalance_Call) Run(run func(ctx context.Context, acco
 		if args[1] != nil {
 			arg1 = args[1].(int)
 		}
-		var arg2 float64
+		var arg2 decimal.Decimal
 		if args[2] != nil {
-			arg2 = args[2].(float64)
+			arg2 = args[2].(decimal.Decimal)
 		}
 		run(
 			arg0,
@@ -228,7 +229,7 @@ func (_c *MockUseCase_UpdateBalance_Call) Return(err error) *MockUseCase_UpdateB
 	return _c
 }
 
-func (_c *MockUseCase_UpdateBalance_Call) RunAndReturn(run func(ctx context.Context, accountID int, amount float64) error) *MockUseCase_UpdateBalance_Call {
+func (_c *MockUseCase_UpdateBalance_Call) RunAndReturn(run func(ctx context.Context, accountID int, amount decimal.Decimal) error) *MockUseCase_UpdateBalance_Call {
 	_c.Call.Return(run)
 	return _c
 }

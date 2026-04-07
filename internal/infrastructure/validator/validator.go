@@ -18,6 +18,8 @@ func NewValidator() echo.Validator {
 	trans, _ := uni.GetTranslator("en")
 	validate := validator.New()
 
+	RegisterDecimalValidators(validate)
+
 	setupCustomMessages(validate, trans)
 
 	return &CustomValidator{
@@ -26,7 +28,7 @@ func NewValidator() echo.Validator {
 	}
 }
 
-func (cv *CustomValidator) Validate(i interface{}) error {
+func (cv *CustomValidator) Validate(i any) error {
 	if err := cv.validator.Struct(i); err != nil {
 		return &ValidationError{
 			validator:     cv.validator,
@@ -51,6 +53,8 @@ func setupCustomMessages(validate *validator.Validate, trans ut.Translator) {
 		"max":      "{0} cannot exceed {1} characters.",
 		"gt":       "{0} must be greater than {1}.",
 		"gte":      "{0} must be greater than or equal to {1}.",
+		"dgt":      "{0} must be greater than {1}.",
+		"dgte":     "{0} must be greater than or equal to {1}.",
 	}
 
 	for tag, msg := range messages {

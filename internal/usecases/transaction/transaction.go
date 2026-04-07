@@ -16,8 +16,8 @@ func (uc *useCase) Create(ctx context.Context, transaction domain.Transaction) (
 			return err
 		}
 
-		account.AvailableCredit += transaction.Amount
-		if account.AvailableCredit < 0 {
+		account.AvailableCredit = account.AvailableCredit.Add(transaction.Amount)
+		if account.AvailableCredit.IsNegative() {
 			return errors.New("negative balance")
 		}
 
