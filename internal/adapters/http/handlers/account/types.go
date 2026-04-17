@@ -3,6 +3,7 @@ package account
 import (
 	"github.com/labstack/echo/v4"
 	usecase "github.com/leandrodam/transactions/internal/usecases/account"
+	"github.com/shopspring/decimal"
 )
 
 type (
@@ -20,7 +21,9 @@ type (
 	}
 
 	AccountResponse struct {
-		AccountID int `json:"account_id"`
+		AccountID       int             `json:"account_id"`
+		DocumentNumber  string          `json:"document_number,omitempty"`
+		AvailableCredit decimal.Decimal `json:"available_credit"`
 	}
 )
 

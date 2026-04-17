@@ -30,7 +30,11 @@ func (h *handler) Create(c echo.Context) error {
 		return c.JSON(e.StatusCode, e.ErrorJSON())
 	}
 
-	return c.JSON(http.StatusCreated, map[string]any{"data": account})
+	return c.JSON(http.StatusCreated, map[string]any{"data": AccountResponse{
+		AccountID:       account.AccountID,
+		DocumentNumber:  account.DocumentNumber,
+		AvailableCredit: account.AvailableCredit,
+	}})
 }
 
 func (h *handler) Find(c echo.Context) error {
@@ -45,5 +49,9 @@ func (h *handler) Find(c echo.Context) error {
 		return c.JSON(e.StatusCode, e.ErrorJSON())
 	}
 
-	return c.JSON(http.StatusOK, map[string]any{"data": account})
+	return c.JSON(http.StatusOK, map[string]any{"data": AccountResponse{
+		AccountID:       account.AccountID,
+		DocumentNumber:  account.DocumentNumber,
+		AvailableCredit: account.AvailableCredit,
+	}})
 }
