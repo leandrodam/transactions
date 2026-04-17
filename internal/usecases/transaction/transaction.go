@@ -2,9 +2,9 @@ package transaction
 
 import (
 	"context"
-	"errors"
 
 	domain "github.com/leandrodam/transactions/internal/domain/transaction"
+	"github.com/leandrodam/transactions/internal/infrastructure/exceptions"
 )
 
 func (uc *useCase) Create(ctx context.Context, transaction domain.Transaction) (domain.Transaction, error) {
@@ -18,7 +18,7 @@ func (uc *useCase) Create(ctx context.Context, transaction domain.Transaction) (
 
 		account.AvailableCredit = account.AvailableCredit.Add(transaction.Amount)
 		if account.AvailableCredit.IsNegative() {
-			return errors.New("negative balance")
+			return exceptions.ErrNegativeBalance
 		}
 
 		err = uc.accountRepository.UpdateBalance(ctx, account.AccountID, transaction.Amount)

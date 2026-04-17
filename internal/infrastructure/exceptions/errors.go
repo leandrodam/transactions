@@ -28,6 +28,11 @@ var (
 		Messages:   []string{"The given accountID is invalid."},
 	}
 
+	ErrNegativeBalance = &Exception{
+		StatusCode: http.StatusBadRequest,
+		Messages:   []string{"The given operation is invalid due to negative balance result."},
+	}
+
 	ErrTransactionNotFound = &Exception{
 		StatusCode: http.StatusNotFound,
 		Messages:   []string{"The requested transaction was not found."},
