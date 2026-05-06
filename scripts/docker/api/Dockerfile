@@ -1,5 +1,5 @@
-ARG GOLANG_VERSION=1.24
-ARG ALPINE_VERSION=3.21
+ARG GOLANG_VERSION=1.26
+ARG ALPINE_VERSION=3.23
 
 # PREPARE
 FROM golang:${GOLANG_VERSION}-alpine${ALPINE_VERSION} AS prepare
@@ -27,6 +27,6 @@ CMD ["/app/transactions-api"]
 # MIGRATE
 FROM prepare AS migrate
 WORKDIR /app/migrations
-RUN go install github.com/pressly/goose/v3/cmd/goose@v3.24.3
+RUN go install github.com/pressly/goose/v3/cmd/goose@v3.27.1
 COPY scripts/db/migrations/mysql .
 CMD ["sh", "-c", "goose mysql \"$DB_USER:$DB_PASSWORD@tcp($DB_HOST:$DB_PORT)/$DB_NAME\" up"]
